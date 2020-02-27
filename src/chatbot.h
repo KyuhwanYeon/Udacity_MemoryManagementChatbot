@@ -1,6 +1,6 @@
 #ifndef CHATBOT_H_
 #define CHATBOT_H_
-
+#include<iostream>
 #include <wx/bitmap.h>
 #include <string>
 
@@ -29,7 +29,25 @@ public:
 
     //// STUDENT CODE
     ////
+    ChatBot(ChatBot &&source) // 4 : move constructor
+    {
+        std::cout << "MOVING (c’tor) instance " << &source << " to instance " << this << std::endl;
+        _image = source._image;
+        source._image = nullptr;
+    }
+    ChatBot &operator=(ChatBot &&source) // 5 : move assignment operator
+    {
+        std::cout << "MOVING (assign) instance " << &source << " to instance " << this << std::endl;
+        if (this == &source)
+            return *this;
 
+        delete[] _image;
+
+        _image = source._image;
+        source._image = nullptr;
+
+        return *this;
+    }
     ////
     //// EOF STUDENT CODE
 

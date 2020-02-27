@@ -25,6 +25,8 @@ chatbot.h
 /home/khyeon/workspace/018_MemChatbot/CppND-Memory-Management-Chatbot-master/src/chatbot.h
 
 /home/khyeon/workspace/018_MemChatbot/CppND-Memory-Management-Chatbot-master/src/chatbot.h
+iostream
+-
 wx/bitmap.h
 -
 string
