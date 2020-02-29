@@ -5,7 +5,7 @@
 #include <iterator>
 #include <tuple>
 #include <algorithm>
-
+#include <memory>
 #include "graphedge.h"
 #include "graphnode.h"
 #include "chatbot.h"
@@ -36,16 +36,16 @@ ChatLogic::~ChatLogic()
     delete _chatBot;
 
     // delete all nodes
-    //for (auto it = std::begin(_nodes); it != std::end(_nodes); ++it)
-   // {
-        //delete *it;
-    //}
+    // for (auto it = std::begin(_nodes); it != std::end(_nodes); ++it)
+    // {
+    //     delete *it;
+    // }
 
     // delete all edges
-  //  for (auto it = std::begin(_edges); it != std::end(_edges); ++it)
-   // {
-   //     delete *it;
-    //}
+    // for (auto it = std::begin(_edges); it != std::end(_edges); ++it)
+    // {
+    //     delete *it;
+    // }
 
     ////
     //// EOF STUDENT CODE
@@ -117,6 +117,7 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
                 auto idToken = std::find_if(tokens.begin(), tokens.end(), [](const std::pair<std::string, std::string> &pair) { return pair.first == "ID"; });
                 if (idToken != tokens.end())
                 {
+    
                     // extract id from token
                     int id = std::stoi(idToken->second);
 
@@ -125,11 +126,12 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
                     {
                         //// STUDENT CODE
                         ////
+                        std::cout<< "newnode"<<std::endl;
 
                         // check if node with this ID exists already
                         auto newNode = std::find_if(_nodes.begin(), _nodes.end(), [&id](std::unique_ptr<GraphNode> &node) { return node->GetID() == id; });
-                        // above function is written as lambada [introducer capture](parameters){statement}
-                        //find_if needs bool function 
+                        
+                        //modified
                         // create new element if ID does not yet exist
                         if (newNode == _nodes.end())
                         {
@@ -149,6 +151,7 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
                     {
                         //// STUDENT CODE
                         ////
+                        std::cout<< "newedge"<<std::endl;
 
                         // find tokens for incoming (parent) and outgoing (child) node
                         auto parentToken = std::find_if(tokens.begin(), tokens.end(), [](const std::pair<std::string, std::string> &pair) { return pair.first == "PARENT"; });
@@ -161,18 +164,18 @@ void ChatLogic::LoadAnswerGraphFromFile(std::string filename)
                             auto childNode = std::find_if(_nodes.begin(), _nodes.end(), [&childToken](std::unique_ptr<GraphNode> &node) { return node->GetID() == std::stoi(childToken->second); });
 
                             // create new edge
-                            auto edge = (std::make_unique<GraphEdge>(id));
-                          //  GraphEdge *edge = new GraphEdge(id);
+                            //GraphEdge *edge = new GraphEdge(id);
+                            // std::unique_ptr<GraphEdge> edge = std::make_unique<GraphEdge>(id);
+                            std::unique_ptr<GraphEdge> edge(new GraphEdge(id));
                             edge->SetChildNode((*childNode).get());
                             edge->SetParentNode((*parentNode).get());
-                            //_edges.push_back(std::move(edge);
-
+                            
                             // find all keywords for current node
                             AddAllTokensToElement("KEYWORD", tokens, *edge);
-
                             // store reference in child node and parent node
                             (*childNode)->AddEdgeToParentNode(edge.get());
                             (*parentNode)->AddEdgeToChildNode(edge.get());
+                            _edges.emplace_back(std::move(edge)); // unique pointer cannot copied, so it should use move sementic
                         }
 
                         ////
