@@ -1,6 +1,6 @@
 #ifndef CHATBOT_H_
 #define CHATBOT_H_
-#include<iostream>
+#include <iostream>
 #include <wx/bitmap.h>
 #include <string>
 
@@ -27,29 +27,10 @@ public:
     ChatBot(std::string filename); // constructor WITH memory allocation
     ~ChatBot();
 
-    //// STUDENT CODE
-    ////
-    ChatBot(ChatBot &&source) // 4 : move constructor
-    {
-        std::cout << "MOVING (c’tor) instance " << &source << " to instance " << this << std::endl;
-        _image = source._image;
-        source._image = nullptr;
-    }
-    ChatBot &operator=(ChatBot &&source) // 5 : move assignment operator
-    {
-        std::cout << "MOVING (assign) instance " << &source << " to instance " << this << std::endl;
-        if (this == &source)
-            return *this;
 
-        delete[] _image;
+    ChatBot(ChatBot &&source); // move constructor
+    ChatBot& operator=(ChatBot &&source); // move assignment operator
 
-        _image = source._image;
-        source._image = nullptr;
-
-        return *this;
-    }
-    ////
-    //// EOF STUDENT CODE
 
     // getters / setters
     void SetCurrentNode(GraphNode *node);
